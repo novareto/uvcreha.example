@@ -1,12 +1,14 @@
-from docmanager.app import application 
+from docmanager.app import application
 from docmanager.request import Request
 from horseman.response import reply
-
+from functools import cached_property
 
 
 class CustomRequest(Request):
-    pass
 
+    @cached_property
+    def database_session(self):
+        return self.app.database.new_session()
 
 
 @application.routes.register('/myview')
