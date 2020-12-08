@@ -24,11 +24,13 @@ class EventEditForm(DocFormView):
 
     @trigger("speichern", "Speichern", css="btn btn-primary")
     def speichern(self, request, data):
+        document = request.database.bind(Document)
+        document.fetch(request.route.params.get('key'))
         form = self.setupForm(formdata=data.form)
         if not form.validate():
             return form
-        document = request.database.bind(Document)
         doc_data = data.form.dict()
         form_data = request.route.params
+        import pdb; pdb.set_trace()
         document.update(data=doc_data, **form_data)
         return horseman.response.Response.create(302, headers={"Location": "/"})
