@@ -33,4 +33,5 @@ class EventEditForm(DocFormView):
         form_data = request.route.params
         import pdb; pdb.set_trace()
         document.update(data=doc_data, **form_data)
-        return horseman.response.Response.create(302, headers={"Location": "/"})
+        return horseman.response.Response.create(
+            302, headers={"Location": "/"})
