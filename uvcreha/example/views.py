@@ -9,7 +9,8 @@ from .models import SomeDocument
 from reiter.form import trigger
 
 
-@application.routes.register("/users/{username}/files/{az}/docs/{key}/edit", methods=("GET", "POST"), name="event_edit")
+@application.routes.register(
+    "/users/{username}/files/{az}/docs/{key}/edit", name="event_edit")
 class EventEditForm(DocFormView):
 
     title = "Form"
