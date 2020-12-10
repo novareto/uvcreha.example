@@ -24,12 +24,16 @@ class EventEditForm(DocFormView):
 
     @trigger("speichern", "Speichern", css="btn btn-primary")
     def speichern(self, request, data):
-        import pdb; pdb.set_trace()
         document = request.database.bind(BaseDocument)
         document.fetch(request.route.params.get('key'))
         form = self.setupForm(formdata=data.form)
         if not form.validate():
-            return form
+            return {
+                "form": form,
+                "view": self,
+                "error": None,
+                "path": request.route.path
+            }
         doc_data = data.form.dict()
         form_data = request.route.params
         document.update(item=doc_data, **form_data)
