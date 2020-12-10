@@ -1,7 +1,7 @@
 import horseman.response
 
 from docmanager.app import browser as application
-from docmanager.models import Document
+from docmanager.models import BaseDocument
 from docmanager.browser.form import DocFormView, Form
 
 from horseman.http import Multidict
@@ -25,14 +25,14 @@ class EventEditForm(DocFormView):
 
     @trigger("speichern", "Speichern", css="btn btn-primary")
     def speichern(self, request, data):
-        document = request.database.bind(Document)
+        import pdb; pdb.set_trace()
+        document = request.database.bind(BaseDocument)
         document.fetch(request.route.params.get('key'))
         form = self.setupForm(formdata=data.form)
         if not form.validate():
             return form
         doc_data = data.form.dict()
         form_data = request.route.params
-        import pdb; pdb.set_trace()
-        document.update(data=doc_data, **form_data)
+        document.update(item=doc_data, **form_data)
         return horseman.response.Response.create(
             302, headers={"Location": "/"})

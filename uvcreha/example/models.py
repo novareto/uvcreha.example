@@ -1,14 +1,9 @@
-from docmanager.models import Document
-from typing import Literal
+from docmanager.models import BaseDocument
 from pydantic import BaseModel, Field
-from reiter.arango.model import Factory, arango_model
 
 
-@arango_model('docs')
-@Document.alternatives.component('account_info')
+@BaseDocument.alternatives.component('account_info')
 class SomeDocument(BaseModel):
-
-    content_type: Literal['account_info']
 
     name: str = Field(
         title="Name",
