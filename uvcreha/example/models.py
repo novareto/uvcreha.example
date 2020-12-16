@@ -1,8 +1,8 @@
-from docmanager.models import BaseDocument
+from docmanager.models import Document
 from pydantic import BaseModel, Field
 
 
-@BaseDocument.alternatives.component('account_info')
+@Document.alternatives.component('account_info')
 class SomeDocument(BaseModel):
 
     name: str = Field(
