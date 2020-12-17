@@ -1,21 +1,34 @@
 import horseman.response
-
+import pathlib
 from docmanager.app import browser as application
 from docmanager.models import Document
 from docmanager.browser.form import DocFormView, Form
 from docmanager.request import Request
+from docmanager.browser.layout import template
 
 from horseman.http import Multidict
 from .models import SomeDocument
 from reiter.form import trigger
+from docmanager.workflow import document_workflow, DocumentWorkflow
+from docmanager.browser import TemplateLoader
+
+
+TEMPLATES = TemplateLoader(
+    str((pathlib.Path(__file__).parent / "templates").resolve()), ".pt")
+
 
 
 @application.routes.register(
     "/users/{username}/files/{az}/docs/{key}", methods=["GET"], name="event_edit"
 )
+@template(TEMPLATES["index.pt"], raw=False)
 def document_index(request: Request, **kwargs):
-    import pdb; pdb.set_trace()
-    return EventEditForm(request)()
+    document = request.database(Document).fetch(request.route.params.get("key"))
+    if document.state == "inquiry":
+        view = EventEditForm()
+        method = getattr(view, request.method)
+        return method(request)
+    return dict(request=request, document=document)
 
 
 @application.routes.register(
@@ -35,8 +48,8 @@ class EventEditForm(DocFormView):
 
     @trigger("speichern", "Speichern", css="btn btn-primary")
     def speichern(self, request, data):
-        document = request.database(Document)
-        document.fetch(request.route.params.get("key"))
+        binding = request.database(Document)
+        document = binding.fetch(request.route.params.get("key"))
         form = self.setupForm(formdata=data.form)
         if not form.validate():
             return {
@@ -47,5 +60,9 @@ class EventEditForm(DocFormView):
             }
         doc_data = data.form.dict()
         form_data = request.route.params
-        document.update(item=doc_data, **form_data)
+        wf = document_workflow(document, request=request)
+        wf.set_state(DocumentWorkflow.states.sent)
+        binding.update(
+            item=doc_data, state=DocumentWorkflow.states.sent.name, **form_data
+        )
         return horseman.response.Response.create(302, headers={"Location": "/"})
