@@ -18,7 +18,7 @@ TEMPLATES = TemplateLoader(
 
 
 
-@application.routes.register(
+@application.route(
     "/users/{username}/files/{az}/docs/{key}", methods=["GET"], name="event_edit"
 )
 @template(TEMPLATES["index.pt"], raw=False)
@@ -31,7 +31,7 @@ def document_index(request: Request, **kwargs):
     return dict(request=request, document=document)
 
 
-@application.routes.register(
+@application.route(
     "/users/{username}/files/{az}/docs/{key}/edit", name="vent_edit"
 )
 class EventEditForm(DocFormView):
