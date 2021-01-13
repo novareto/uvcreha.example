@@ -1,16 +1,10 @@
 from horseman.response import Response
-from docmanager.app import api
-from docmanager.app import browser
+from docmanager.app import api, browser
 from docmanager.models import User
-from docmanager.request import Request
-
-
-class CustomRequest(Request):
-    pass
 
 
 @browser.route("/myview")
-def my_view(request: CustomRequest):
+def my_view(request):
     return Response.create(body="HALLO WELT")
 
 
