@@ -1,24 +1,23 @@
 import horseman.response
 import pathlib
-from docmanager.app import browser as application
+
+from horseman.http import Multidict
+from reiter.form import trigger
+from docmanager.app import browser
 from docmanager.models import Document
 from docmanager.browser.form import DocFormView, Form
 from docmanager.request import Request
 from docmanager.browser.layout import template
-
-from horseman.http import Multidict
-from .models import SomeDocument
-from reiter.form import trigger
 from docmanager.workflow import document_workflow, DocumentWorkflow
 from docmanager.browser import TemplateLoader
+from .models import SomeDocument
 
 
 TEMPLATES = TemplateLoader(
     str((pathlib.Path(__file__).parent / "templates").resolve()), ".pt")
 
 
-
-@application.route(
+@browser.route(
     "/users/{username}/files/{az}/docs/{key}", methods=["GET"], name="event_edit"
 )
 @template(TEMPLATES["index.pt"], raw=False)
@@ -31,7 +30,7 @@ def document_index(request: Request, **kwargs):
     return dict(request=request, document=document)
 
 
-@application.route(
+@browser.route(
     "/users/{username}/files/{az}/docs/{key}/edit", name="vent_edit"
 )
 class EventEditForm(DocFormView):

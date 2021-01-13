@@ -1,2 +1,0 @@
-"""Package for uvcreha.example."""
-

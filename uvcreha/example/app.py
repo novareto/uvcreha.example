@@ -6,6 +6,8 @@ from reiter.application.app import Blueprint
 from fanstatic import Resource, Library
 from docmanager.browser.layout import template
 from .views import TEMPLATES
+from docmanager.app import api, browser
+from docmanager.models import User
 
 
 event_bp = Blueprint(name="event_blueprint")
@@ -15,8 +17,8 @@ class CustomRequest(Request):
     pass
 
 
-@event_bp.route("/myview")
-def my_view(request: CustomRequest):
+@browser.route("/myview")
+def my_view(request):
     return Response.create(body="HALLO WELT")
 
 
