@@ -37,7 +37,7 @@ library = Library('uvcreha.example', 'static')
 wc = Resource(library, 'wc.js', bottom=True)
 
 
-@event_bp.route('/wc')
+@browser.route('/wc')
 @template(TEMPLATES["wc.pt"], layout_name="default", raw=False)
 def wd_view(request: CustomRequest):
     wc.need()
