@@ -22,3 +22,8 @@ def handleit(request, username, document):
                     user.preferences.webpush_subscription):
             request.app.plugins['webpush'].send(
                 user.preferences.webpush_subscription, 'My Message')
+        else:
+            print(f'{username} does not have a webpush '
+                  f'activated {user.preferences}.')
+    else:
+        print(f'Unknown user {username}.')
