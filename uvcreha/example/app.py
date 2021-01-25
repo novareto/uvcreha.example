@@ -1,8 +1,16 @@
 from horseman.response import Response
 from docmanager.app import api
-from docmanager.app import browser
 from docmanager.models import User
 from docmanager.request import Request
+from fanstatic import Resource, Library
+from docmanager.browser.layout import template
+from .views import TEMPLATES
+from docmanager.app import api, browser
+from docmanager.models import User
+
+
+library = Library('uvcreha.example', 'static')
+wc = Resource(library, 'wc.js', bottom=True)
 
 
 class CustomRequest(Request):
@@ -10,7 +18,7 @@ class CustomRequest(Request):
 
 
 @browser.route("/myview")
-def my_view(request: CustomRequest):
+def my_view(request):
     return Response.create(body="HALLO WELT")
 
 
@@ -27,3 +35,10 @@ def handleit(request, username, document):
                   f'activated {user.preferences}.')
     else:
         print(f'Unknown user {username}.')
+
+
+@browser.route('/wc')
+@template(TEMPLATES["wc.pt"], layout_name="default", raw=False)
+def wd_view(request: CustomRequest):
+    wc.need()
+    return dict(request=request)

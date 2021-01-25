@@ -1,0 +1,10 @@
+    <h1>Word count rating widget</h1>
+
+    <article contenteditable="">
+      <h2>Sample heading</h2>
+
+      <p> Das Ist ein Test </p>
+      <p> Das Ist ein Test </p>
+
+      <p is="word-count"></p>
+    </article>
