@@ -1,12 +1,9 @@
-from horseman.response import Response
-from docmanager.app import api
-from docmanager.models import User
-from docmanager.request import Request
 from fanstatic import Resource, Library
-from docmanager.browser.layout import template
-from .views import TEMPLATES
+from horseman.response import Response
 from docmanager.app import api, browser
 from docmanager.models import User
+from docmanager.request import Request
+from .views import TEMPLATES
 
 
 library = Library('uvcreha.example', 'static')
@@ -38,7 +35,9 @@ def handleit(request, username, document):
 
 
 @browser.route('/wc')
-@template(TEMPLATES["wc.pt"], layout_name="default", raw=False)
 def wd_view(request: CustomRequest):
     wc.need()
-    return dict(request=request)
+    return request.app.ui.response(
+        TEMPLATES["wc.pt"],
+        request=request
+    )
