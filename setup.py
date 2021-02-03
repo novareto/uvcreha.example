@@ -21,6 +21,9 @@ setup(
     license="GPL",
     url="http://www.novareto.de",
     entry_points={
+        'fanstatic.libraries': [
+            'uvcreha.example = uvcreha.example.app:library',
+        ],
         'docmanager.plugins': [
             'example = uvcreha.example'
         ],
