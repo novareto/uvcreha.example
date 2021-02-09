@@ -1,4 +1,4 @@
-<div id="form">
+<div id="form" tal:define="k 'KLAS'">
   <h1 tal:content="view.title" />
   <p class="lead" tal:content="view.description" />
   <form method="POST" tal:attributes="action view.action" novalidate>
@@ -16,7 +16,8 @@
              tal:content="field.description"
              tal:condition="field.description" />
       -->
-      <div tal:define="f field"> <div metal:use-macro="view.template.macros['field']"/> </div>
+      <div metal:use-macro="view.template.macros['field_macro']"> </div> 
+
     </div>
     <div class="form-actions">
       <tal:action repeat="action actions.values()">
@@ -32,17 +33,19 @@
 
 
 
-<div metal:define-macro="field" class="form-group">
-  <h1> HI </h1>
-  <span tal:content="view">
-  <!--
-  <label tal:replace="field.label"> </label>
-  <div tal:content="structure field()" tal:attributes="class field.errors and 'is-invalid' or 'is-valid'"> </div>
-  <div class="invalid-feedback" tal:condition="field.errors">
-    <div tal:repeat="error field.errors">
-      <span tal:content="error" />
-    </div>
-  </div>
-  <small class="form-text text-muted" tal:content="field.description" tal:condition="field.description" />
-  -->
-</div>
+<span tal:condition="exists: field">
+	<div metal:define-macro="field-macro" class="form-group">
+		<label tal:replace="field.label"> </label>
+		<div tal:content="structure field()"
+				 tal:attributes="class field.errors and 'is-invalid' or 'is-valid'"> </div>
+		<div class="invalid-feedback" tal:condition="field.errors">
+			<div tal:repeat="error field.errors">
+				<span tal:content="error" />
+			</div>
+		</div>
+		<small class="form-text text-muted"
+					 tal:content="field.description"
+					 tal:condition="field.description" />
+
+	</div>
+</span>
