@@ -1,37 +1,36 @@
-import horseman.response
-import pathlib
-
+from .app import TEMPLATES
+from .models import SomeDocument
+from docmanager.app import browser
+from docmanager.browser.form import DocFormView, Form
+from docmanager.models import Document
+from docmanager.workflow import DocumentWorkflow, document_workflow
 from horseman.http import Multidict
 from reiter.form import trigger
-from docmanager.app import browser
-from docmanager.models import Document
-from docmanager.browser.form import DocFormView, Form
-from docmanager.request import Request
-from docmanager.browser.layout import template
-from docmanager.workflow import document_workflow, DocumentWorkflow
-from docmanager.browser import TemplateLoader
-from .models import SomeDocument
+from reiter.view.meta import View
+import horseman.response
 
 
-TEMPLATES = TemplateLoader(
-    str((pathlib.Path(__file__).parent / "templates").resolve()), ".pt")
+@browser.routes.register(
+    "/users/{username}/files/{az}/docs/{key}", name="index")
+class DocumentIndex(View):
+    template = TEMPLATES["index.pt"]
+
+    def GET(self):
+        document = self.request.database(Document).fetch(self.request.route.params.get("key"))
+        if document.state == "Inquiry":
+            return horseman.response.Response.create(
+                302,
+                headers={
+                    "Location": self.request.app.routes.url_for(
+                        "event_edit", **self.request.route.params
+                    )
+                },
+            )
+        return dict(request=self.request, document=document)
 
 
-@browser.route(
-    "/users/{username}/files/{az}/docs/{key}", methods=["GET"], name="event_edit"
-)
-@template(TEMPLATES["index.pt"], raw=False)
-def document_index(request: Request, **kwargs):
-    document = request.database(Document).fetch(request.route.params.get("key"))
-    if document.state == "inquiry":
-        view = EventEditForm()
-        method = getattr(view, request.method)
-        return method(request)
-    return dict(request=request, document=document)
-
-
-@browser.route(
-    "/users/{username}/files/{az}/docs/{key}/edit", name="vent_edit"
+@browser.routes.register(
+    "/users/{username}/files/{az}/docs/{key}/edit", name="event_edit"
 )
 class EventEditForm(DocFormView):
 
@@ -60,7 +59,7 @@ class EventEditForm(DocFormView):
         doc_data = data.form.dict()
         form_data = request.route.params
         wf = document_workflow(document, request=request)
-        wf.set_state(DocumentWorkflow.states.sent)
+        wf.transition_to(DocumentWorkflow.states.sent)
         binding.update(
             item=doc_data, state=DocumentWorkflow.states.sent.name, **form_data
         )
